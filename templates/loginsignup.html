@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" type="text/css" href="\static\loginsignupstyle.css">
+  <style>
+    /* Additional styles for real-time feedback */
+    .feedback {
+      display: block; /* Ensure it's always displayed */
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .feedback.success {
+      color: green;
+    }
+
+    .feedback.error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="form-wrapper sign-in">
+      <form action="/login" method="post" id="login">
+        <h2>Login</h2>
+        <div class="input-group">
+          <input type="email" name="email-login" required>
+          <label for="">Email</label>
+        </div>
+        <div class="input-group">
+          <input type="password" name ="password-login" required>
+          <label for="">Password</label>
+        </div>
+        <div class="forgot-password">
+          <a href="forgot" class="forgot-password-link">Forgot Password?</a>
+        </div>
+        <button type="submit">Login</button>
+        <div class="signUp-link">
+          <p>Don't have an account? <a href="#" class="signUpBtn-link">Sign Up</a></p>
+        </div>
+      </form>
+    </div>
+    <div class="form-wrapper sign-up">
+      <form action="/verify" method="post" id="signup">
+        <h2>Sign Up</h2>
+        <div class="input-group">
+          <input type="text" name="username" required>
+          <label for="">Username</label>
+        </div>
+        <div class="input-group">
+          <input type="email" name="email_signup" required>
+          <label for="">Email</label>
+        </div>
+        <div class="input-group">
+          <input type="password" id="password" name="password" required>
+          <label for="">Password</label>
+          <span id="passwordFeedback" class="feedback"></span>
+        </div>
+        <div class="input-group">
+          <input type="password" id="verifyPassword" name="verify_password" required>
+          <label for="">Confirm Password</label>
+          <span id="verifyFeedback" class="feedback"></span>
+        </div>
+        <button type="submit" id="signUpButton">Sign Up</button>
+        <div class="signUp-link">
+          <p>Already have an account? <a href="#" class="signInBtn-link">Sign In</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    const passwordField = document.getElementById('password');
+    const verifyPasswordField = document.getElementById('verifyPassword');
+    const passwordFeedback = document.getElementById('passwordFeedback');
+    const verifyFeedback = document.getElementById('verifyFeedback');
+
+    // Regular expression for a strong password
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+
+    // Real-time password validation
+    passwordField.addEventListener('input', () => {
+      const password = passwordField.value;
+
+      if (password === '') {
+        passwordFeedback.textContent = ''; // Clear feedback when input is empty
+        passwordFeedback.classList.remove('error', 'success');
+      } else if (strongPasswordRegex.test(password)) {
+        passwordFeedback.textContent = 'Password is strong!';
+        passwordFeedback.classList.remove('error');
+        passwordFeedback.classList.add('success');
+      } else {
+        passwordFeedback.textContent =
+        "Use atleast 8 characters, upper & lower case, special characters";
+        passwordFeedback.classList.remove('success');
+        passwordFeedback.classList.add('error');
+      }
+    });
+
+    // Real-time verify password validation
+    verifyPasswordField.addEventListener('input', () => {
+      const password = passwordField.value;
+      const verifyPassword = verifyPasswordField.value;
+
+      if (verifyPassword === '') {
+        verifyFeedback.textContent = ''; // Clear feedback when input is empty
+        verifyFeedback.classList.remove('error', 'success');
+      } else if (password === verifyPassword) {
+        verifyFeedback.textContent = 'Passwords match!';
+        verifyFeedback.classList.remove('error');
+        verifyFeedback.classList.add('success');
+      } else {
+        verifyFeedback.textContent = 'Passwords do not match.';
+        verifyFeedback.classList.remove('success');
+        verifyFeedback.classList.add('error');
+      }
+    });
+
+    // Prevent form submission if validations fail
+    const signUpForm = document.getElementById('signup');
+    signUpForm.addEventListener('submit', (event) => {
+      const password = passwordField.value;
+      const verifyPassword = verifyPasswordField.value;
+
+      if (!strongPasswordRegex.test(password)) {
+        alert('Please enter a strong password!');
+        event.preventDefault();
+        return;
+      }
+
+      if (password !== verifyPassword) {
+        alert('Passwords do not match!');
+        event.preventDefault();
+      }
+    });
+  </script>
+  <script src="\static\script.js"></script>
+</body>
+</html>

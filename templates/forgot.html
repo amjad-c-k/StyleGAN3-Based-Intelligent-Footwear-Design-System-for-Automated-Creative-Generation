@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forgot Password</title>
+  <link rel="stylesheet" type="text/css" href="\static\loginsignupstyle.css">
+  <style>
+    /* Additional styles for real-time feedback */
+    .feedback {
+      display: block; /* Ensure it's always displayed */
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .feedback.success {
+      color: green;
+    }
+
+    .feedback.error {
+      color: red;
+    }
+    
+    .form-wrapper.forgot-password {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    
+    .otp-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: translateY(-450px);
+    }
+    
+    .wrapper.otp-active .otp-wrapper {
+      transform: translateY(0);
+    }
+    
+    .wrapper.otp-active .form-wrapper.forgot-password {
+      transform: translateY(450px);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper" id="forgotWrapper">
+    <div class="form-wrapper forgot-password">
+      <form action="#" method="post" id="forgotForm">
+        <h2>Forgot Password</h2>
+        <div class="input-group">
+          <input type="email" name="email" id="email" required>
+          <label for="email">Email</label>
+        </div>
+        <div class="input-group">
+          <input type="password" id="newPassword" name="newPassword" required>
+          <label for="newPassword">New Password</label>
+          <span id="passwordFeedback" class="feedback"></span>
+        </div>
+        <div class="input-group">
+          <input type="password" id="confirmPassword" name="confirmPassword" required>
+          <label for="confirmPassword">Confirm Password</label>
+          <span id="confirmFeedback" class="feedback"></span>
+        </div>
+        <button type="submit" id="resetBtn">Send Reset OTP</button>
+        <div class="signUp-link">
+          <p>Remember your password? <a href="/" class="loginBtn-link">Login</a></p>
+        </div>
+      </form>
+    </div>
+    
+    <div class="form-wrapper otp-wrapper">
+      <form action="#" method="post" id="otpForm">
+        <h2>Verify OTP</h2>
+        <p>An OTP has been sent to your email</p>
+        <div class="input-group">
+          <input type="hidden" id="otpEmail" name="otpEmail">
+          <input type="hidden" id="otpNewPassword" name="otpNewPassword">
+          <input type="text" id="otp" name="otp" required>
+          <label for="otp">Enter OTP</label>
+        </div>
+        <button type="submit" id="verifyBtn">Verify & Reset Password</button>
+        <div class="signUp-link">
+          <p>Didn't receive OTP? <a href="#" id="resendOtp">Resend OTP</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <div id="messageModal" class="modal">
+    <div class="modal-content">
+      <p id="modalMessage"></p>
+      <button id="closeModal">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const forgotForm = document.getElementById('forgotForm');
+    const otpForm = document.getElementById('otpForm');
+    const forgotWrapper = document.getElementById('forgotWrapper');
+    const newPasswordField = document.getElementById('newPassword');
+    const confirmPasswordField = document.getElementById('confirmPassword');
+    const passwordFeedback = document.getElementById('passwordFeedback');
+    const confirmFeedback = document.getElementById('confirmFeedback');
+    const messageModal = document.getElementById('messageModal');
+    const modalMessage = document.getElementById('modalMessage');
+    const closeModal = document.getElementById('closeModal');
+    const resendOtp = document.getElementById('resendOtp');
+    const otpEmail = document.getElementById('otpEmail');
+    const otpNewPassword = document.getElementById('otpNewPassword');
+
+    // Regular expression for a strong password
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+
+    // Real-time password validation
+    newPasswordField.addEventListener('input', () => {
+      const password = newPasswordField.value;
+
+      if (password === '') {
+        passwordFeedback.textContent = ''; // Clear feedback when input is empty
+        passwordFeedback.classList.remove('error', 'success');
+      } else if (strongPasswordRegex.test(password)) {
+        passwordFeedback.textContent = 'Password is strong!';
+        passwordFeedback.classList.remove('error');
+        passwordFeedback.classList.add('success');
+      } else {
+        passwordFeedback.textContent =
+        "Use at least 8 characters, upper & lower case, special characters";
+        passwordFeedback.classList.remove('success');
+        passwordFeedback.classList.add('error');
+      }
+      
+      // Also check confirm password field if it has a value
+      if (confirmPasswordField.value) {
+        checkPasswordMatch();
+      }
+    });
+
+    // Real-time confirm password validation
+    confirmPasswordField.addEventListener('input', checkPasswordMatch);
+
+    // Function to check if passwords match
+    function checkPasswordMatch() {
+      const password = newPasswordField.value;
+      const confirmPassword = confirmPasswordField.value;
+
+      if (confirmPassword === '') {
+        confirmFeedback.textContent = ''; // Clear feedback when input is empty
+        confirmFeedback.classList.remove('error', 'success');
+      } else if (password === confirmPassword) {
+        confirmFeedback.textContent = 'Passwords match!';
+        confirmFeedback.classList.remove('error');
+        confirmFeedback.classList.add('success');
+      } else {
+        confirmFeedback.textContent = 'Passwords do not match.';
+        confirmFeedback.classList.remove('success');
+        confirmFeedback.classList.add('error');
+      }
+    }
+
+    // Handle forgot password form submission
+    forgotForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const newPassword = newPasswordField.value;
+      const confirmPassword = confirmPasswordField.value;
+      
+      // Validate password strength
+      if (!strongPasswordRegex.test(newPassword)) {
+        showModal('Please enter a strong password!');
+        return;
+      }
+      
+      // Validate password match
+      if (newPassword !== confirmPassword) {
+        showModal('Passwords do not match!');
+        return;
+      }
+      
+      try {
+        // Request OTP for password reset
+        const response = await fetch('/request-reset-otp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+          // Store email and new password for OTP verification
+          otpEmail.value = email;
+          otpNewPassword.value = newPassword;
+          
+          // Show OTP form
+          forgotWrapper.classList.add('otp-active');
+          
+          showModal('OTP sent to your email address. Please check your inbox.');
+        } else {
+          showModal(result.message || 'Failed to send OTP. Please try again.');
+        }
+      } catch (error) {
+        showModal('An error occurred. Please try again later.');
+        console.error('Error:', error);
+      }
+    });
+    
+    // Handle OTP verification form submission
+    otpForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      
+      const email = otpEmail.value;
+      const newPassword = otpNewPassword.value;
+      const otp = document.getElementById('otp').value;
+      
+      try {
+        // Verify OTP and reset password
+        const response = await fetch('/reset-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, newPassword, otp }),
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+          showModal('Password reset successfully! Redirecting to login...');
+          
+          // Redirect to login page after a delay
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+        } else {
+          showModal(result.message || 'Failed to verify OTP. Please try again.');
+        }
+      } catch (error) {
+        showModal('An error occurred. Please try again later.');
+        console.error('Error:', error);
+      }
+    });
+    
+    // Handle resend OTP link
+    resendOtp.addEventListener('click', async (event) => {
+      event.preventDefault();
+      
+      const email = otpEmail.value;
+      
+      if (!email) {
+        showModal('Email information is missing. Please restart the process.');
+        return;
+      }
+      
+      try {
+        // Request OTP again
+        const response = await fetch('/request-reset-otp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+          showModal('OTP resent to your email address. Please check your inbox.');
+        } else {
+          showModal(result.message || 'Failed to resend OTP. Please try again.');
+        }
+      } catch (error) {
+        showModal('An error occurred. Please try again later.');
+        console.error('Error:', error);
+      }
+    });
+    
+    // Show modal message
+    function showModal(message) {
+      modalMessage.textContent = message;
+      messageModal.style.display = 'block';
+    }
+    
+    // Close modal when clicking the close button
+    closeModal.addEventListener('click', () => {
+      messageModal.style.display = 'none';
+    });
+    
+    // Close modal when clicking outside the modal content
+    window.addEventListener('click', (event) => {
+      if (event.target === messageModal) {
+        messageModal.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

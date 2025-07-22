@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Shoe Designer Dashboard</title>
+    <!-- Add these meta tags in the <head> section of your dashboard.html file -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    
+    <style>
+        /* Animation for the loading dots */
+        .loading-dots {
+            display: inline-block;
+            width: 20px;
+            text-align: left;
+        }
+        
+        .loading-dots::after {
+            content: '';
+            display: inline-block;
+            animation: loadingDots 2s infinite;
+        }
+        
+        @keyframes loadingDots {
+            0% { content: '.'; }
+            25% { content: '..'; }
+            50% { content: '...'; }
+            75% { content: '..'; }
+            100% { content: '.'; }
+        }
+        
+        .loading-subtext {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+    <!-- Replace the header section in dashboard.html with this simplified version -->
+
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="dashboard-logo">
+                        <i class="fas fa-shoe-prints me-2"></i>Generative AI Shoe Designer
+                    </h1>
+                </div>
+                <div class="col-md-4">
+                    <div class="user-controls d-flex justify-content-end align-items-center">
+                        <a href="/logout" class="btn btn-outline-light logout-btn">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Navigation -->
+    <div class="dashboard-nav">
+        <div class="container-fluid">
+            <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="generator-tab" data-bs-toggle="tab" data-bs-target="#generator-panel" type="button" role="tab">
+                        <i class="fas fa-image me-2"></i>Image Generator
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="text-generator-tab" data-bs-toggle="tab" data-bs-target="#text-generator-panel" type="button" role="tab">
+                        <i class="fas fa-font me-2"></i>Text Generator
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="production-tab" data-bs-toggle="tab" data-bs-target="#production-panel" type="button" role="tab">
+                        <i class="fas fa-industry me-2"></i>Send to Production
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-panel" type="button" role="tab">
+                        <i class="fas fa-history me-2"></i>Design History
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-content">
+        <div class="container-fluid">
+            <div class="tab-content" id="dashboardTabContent">
+                <!-- Image Generator Panel -->
+                <div class="tab-pane fade show active" id="generator-panel" role="tabpanel" aria-labelledby="generator-tab">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-image me-2"></i>Image-to-Image Generator</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="designForm" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="shoeImage" class="form-label">Upload Shoe Image</label>
+                                        <div class="input-group">
+                                            <input type="file" class="form-control" id="shoeImage" name="shoe_image" accept="image/*" required>
+                                            <button class="btn btn-outline-secondary" type="button" id="previewBtn">Preview</button>
+                                        </div>
+                                        <div class="form-text">Select a high-quality image of your shoe design</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="variationsCount" class="form-label">Number of Variations</label>
+                                        <select class="form-select" id="variationsCount" name="variations_count">
+                                            <option value="1">1 Variation</option>
+                                            <option value="2">2 Variations</option>
+                                            <option value="3">3 Variations</option>
+                                            <option value="4" selected>4 Variations</option>
+                                            <option value="6">6 Variations</option>
+                                            <option value="8">8 Variations</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-12 text-center">
+                                        <div id="previewContainer" class="preview-container d-none">
+                                            <img id="imagePreview" src="#" alt="Preview" class="img-fluid preview-image">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-12 text-center">
+                                        <button type="submit" id="generateBtn" class="btn btn-primary btn-lg me-2">
+                                            <i class="fas fa-magic me-2"></i>Generate Variations
+                                        </button>
+                                        <button type="button" id="regenerateBtn" class="btn btn-secondary btn-lg" disabled>
+                                            <i class="fas fa-redo me-2"></i>Regenerate
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                            <div class="mt-5">
+                                <!-- Improved Image-to-Image Loading Indicator -->
+                                <div id="loadingIndicator" class="text-center d-none">
+                                    <div class="shoe-loader-container">
+                                        <div class="text-particles">
+                                            <span><img src="{{ url_for('static', filename='sneakers.png') }}" alt="Shoe" class="emoji-img" /></span>
+                                        </div>
+                                    </div>
+                                    <p class="mt-4">
+                                        Generating designs<span class="loading-dots"></span>
+                                    </p>
+                                    <p class="loading-subtext">This may take a few minutes</p>
+                                </div>
+                                
+                                <div id="resultsContainer" class="d-none">
+                                    <h3 class="mb-3">Generated Variations</h3>
+                                    <p class="text-muted mb-3">Click the industry icon to send designs to production</p>
+                                    <div class="row" id="generatedImages">
+                                        <!-- Generated images will be inserted here -->
+                                    </div>
+                                    <div class="text-center mt-4">
+                                        <button id="downloadAllBtn" class="btn btn-success">
+                                            <i class="fas fa-download me-2"></i>Download All
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Text Generator Panel -->
+                <div class="tab-pane fade" id="text-generator-panel" role="tabpanel" aria-labelledby="text-generator-tab">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-font me-2"></i>Text-to-Image Generator</h2>
+                        </div>
+                        <div class="card-body">
+                            <!-- Modified Text-to-Image Form Section -->
+                            <form id="textToImageForm">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="textPrompt" class="form-label">Describe Your Shoe Design</label>
+                                        <textarea class="form-control" id="textPrompt" name="text_prompt" rows="4" 
+                                                placeholder="Example: brown leather boots with laces, running shoes with blue accents, elegant high heels..." required></textarea>
+                                        <div class="form-text">Describe the shoe design you want to create. Be specific about colors, materials, style, etc.</div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-md-12 mb-3">
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            <strong>Tips for better results:</strong>
+                                            <ul class="mb-0 mt-2">
+                                                <li>Be specific about colors and materials</li>
+                                                <li>Mention the shoe type (boots, sneakers, heels, etc.)</li>
+                                                <li>Include style details (laces, buckles, patterns)</li>
+                                                <li>Separate different concepts with a pipe symbol (|)</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-12 text-center">
+                                        <button type="submit" id="generateTextBtn" class="btn btn-primary btn-lg me-2">
+                                            <i class="fas fa-magic me-2"></i>Generate from Text
+                                        </button>
+                                        <button type="button" id="regenerateTextBtn" class="btn btn-secondary btn-lg" disabled>
+                                            <i class="fas fa-redo me-2"></i>Regenerate
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Hidden inputs for backend parameters -->
+                            <input type="hidden" id="generationSteps" name="steps" value="300">
+                            <input type="hidden" id="qualityThreshold" name="quality_threshold" value="0.6">
+                            
+                            <div class="mt-5">
+                                <!-- Improved Text-to-Image Loading Indicator -->
+                                <div id="textLoadingIndicator" class="text-center d-none">
+                                    <div class="text-to-shoe-loader">
+                                        <div class="text-particles">
+                                            <span><img src="{{ url_for('static', filename='sneakers.png') }}" alt="Shoe" class="emoji-img" /></span>
+                                        </div>
+                                    </div>
+                                    <p class="mt-4">
+                                        Generating Text to image<span class="loading-dots"></span>
+                                    </p>
+                                    <p class="loading-subtext">This may take a few minutes</p>
+                                </div>
+                                
+                                <div id="textResultsContainer" class="d-none">
+                                    <h3 class="mb-3">Generated from Text</h3>
+                                    <p class="text-muted mb-3" id="generatedPromptDisplay"></p>
+                                    <div class="row" id="textGeneratedImages">
+                                        <!-- Generated images will be inserted here -->
+                                    </div>
+                                    <div class="text-center mt-4">
+                                        <button id="downloadAllTextBtn" class="btn btn-success">
+                                            <i class="fas fa-download me-2"></i>Download All
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Send to Production Panel -->
+                <div class="tab-pane fade" id="production-panel" role="tabpanel" aria-labelledby="production-tab">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-industry me-2"></i>Designs Ready for Production</h2>
+                        </div>
+                        <div class="card-body">
+                            <div id="noProductionMessage" class="text-center py-5">
+                                <i class="fas fa-industry fs-1 text-secondary mb-3"></i>
+                                <p class="text-muted">No designs marked for production yet. Generate designs and send them to production to see them here.</p>
+                            </div>
+                            
+                            <div id="productionSlider" class="production-slider d-none">
+                                <!-- Production images will be inserted here -->
+                            </div>
+                            
+                            <div class="production-grid mt-4 d-none" id="productionGrid">
+                                <div class="row" id="productionItems">
+                                    <!-- Production items will be inserted here -->
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-4 d-none" id="productionActions">
+                                <button id="downloadAllProductionBtn" class="btn btn-success me-2">
+                                    <i class="fas fa-download me-2"></i>Download All
+                                </button>
+                                <button id="sendAllToManufacturingBtn" class="btn btn-primary">
+                                    <i class="fas fa-industry me-2"></i>Send All to Manufacturing
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- History Panel -->
+                <div class="tab-pane fade" id="history-panel" role="tabpanel" aria-labelledby="history-tab">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-history me-2"></i>Design History</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="history-filters mb-4">
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <label for="historyDateFilter" class="form-label">Date Range</label>
+                                        <select class="form-select" id="historyDateFilter">
+                                            <option value="all" selected>All Time</option>
+                                            <option value="today">Today</option>
+                                            <option value="week">This Week</option>
+                                            <option value="month">This Month</option>
+                                            <option value="custom">Custom Range</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="historyTypeFilter" class="form-label">Design Type</label>
+                                        <select class="form-select" id="historyTypeFilter">
+                                            <option value="all" selected>All Types</option>
+                                            <option value="variation">Image-to-Image</option>
+                                            <option value="text_to_image">Text-to-Image</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="historyStatusFilter" class="form-label">Status</label>
+                                        <select class="form-select" id="historyStatusFilter">
+                                            <option value="all" selected>All Status</option>
+                                            <option value="production">Sent to Production</option>
+                                            <option value="draft">Draft</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="historySortOrder" class="form-label">Sort By</label>
+                                        <select class="form-select" id="historySortOrder">
+                                            <option value="newest" selected>Newest First</option>
+                                            <option value="oldest">Oldest First</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3 d-none" id="customDateContainer">
+                                    <div class="col-md-3">
+                                        <label for="historyStartDate" class="form-label">Start Date</label>
+                                        <input type="date" class="form-control" id="historyStartDate">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="historyEndDate" class="form-label">End Date</label>
+                                        <input type="date" class="form-control" id="historyEndDate">
+                                    </div>
+                                    <div class="col-md-3 d-flex align-items-end">
+                                        <button type="button" id="applyCustomDateBtn" class="btn btn-primary">
+                                            <i class="fas fa-filter me-2"></i>Apply Filter
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="historyLoadingIndicator" class="text-center py-4 d-none">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading design history...</p>
+                            </div>
+                            
+                            <div id="noHistoryMessage" class="text-center py-5">
+                                <i class="fas fa-history fs-1 text-secondary mb-3"></i>
+                                <p class="text-muted">No design history found. Generate designs to start building your history.</p>
+                            </div>
+                            
+                            <div class="history-grid mt-4 d-none" id="historyGrid">
+                                <div class="row" id="historyItems">
+                                    <!-- History items will be inserted here -->
+                                </div>
+                                
+                                <div class="text-center mt-4">
+                                    <button id="loadMoreHistoryBtn" class="btn btn-outline-primary">
+                                        <i class="fas fa-plus me-2"></i>Load More
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast for notifications -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong class="me-auto" id="toastTitle">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                Action completed successfully.
+            </div>
+        </div>
+    </div>
+
+    <!-- Design Detail Modal -->
+    <div class="modal fade" id="designDetailModal" tabindex="-1" aria-labelledby="designDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="designDetailModalLabel">Design Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="" alt="Design" class="img-fluid" id="modalDesignImage">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="design-details">
+                                <p><strong>Design ID:</strong> <span id="modalDesignId"></span></p>
+                                <p><strong>Created:</strong> <span id="modalDesignCreated"></span></p>
+                                <p><strong>Type:</strong> <span id="modalDesignType"></span></p>
+                                <p><strong>Status:</strong> <span id="modalDesignStatus"></span></p>
+                                <div id="modalDesignPromptContainer" class="d-none">
+                                    <p><strong>Prompt:</strong></p>
+                                    <p id="modalDesignPrompt"></p>
+                                </div>
+                                <div id="modalDesignQualityContainer" class="d-none">
+                                    <p><strong>Quality Score:</strong> <span id="modalDesignQuality"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="modalDesignProductionBtn">
+                        <i class="fas fa-industry me-2"></i><span id="modalProductionBtnText">Send to Production</span>
+                    </button>
+                    <button type="button" class="btn btn-success" id="modalDesignDownloadBtn">
+                        <i class="fas fa-download me-2"></i>Download
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <!-- Other scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
+<!-- Add this CSS script tag to the <head> section of dashboard.html to ensure the font-awesome icons load correctly -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<!-- Add this Javascript snippet at the end of dashboard.html, just before the closing </body> tag -->
+<script>
+// Fix for download all functionality
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Ensure industry icons display correctly everywhere
+    function fixIndustryIcons() {
+        // Fix for favorite buttons
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+            // Replace icon with industry icon
+            if (btn.classList.contains('active')) {
+                btn.innerHTML = '<i class="fas fa-industry"></i>';
+                btn.title = 'Remove from Production';
+            } else {
+                btn.innerHTML = '<i class="fas fa-industry"></i>';
+                btn.title = 'Send to Production';
+            }
+        });
+    }
+    
+    // Call the fix immediately and also set it to run periodically
+    fixIndustryIcons();
+    setInterval(fixIndustryIcons, 2000);
+});
+</script>

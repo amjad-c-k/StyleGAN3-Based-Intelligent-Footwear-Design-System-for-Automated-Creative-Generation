@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Email</title>
+  <link rel="stylesheet" type="text/css" href="\static\loginsignupstyle.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div class="form-wrapper verify-email">
+      <form id="verifyForm">
+        <h2>Verify Email</h2>
+        <div class="input-group">
+          <input type="hidden" id="email" value="{{ email }}">
+          <input type="text" name="otp" id="verificationCode" required>
+          <label for="verificationCode">Verification Code</label>
+        </div>
+        <button type="submit">Verify Email</button>
+      </form>
+    </div>
+  </div>
+  <div id="messageModal" class="modal">
+    <div class="modal-content">
+      <p id="modalMessage"></p>
+      <button id="closeModal">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const verifyForm = document.getElementById('verifyForm');
+    const messageModal = document.getElementById('messageModal');
+    const modalMessage = document.getElementById('modalMessage');
+    const closeModal = document.getElementById('closeModal');
+
+    // Handle form submission
+    verifyForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const otp = document.getElementById('verificationCode').value;
+      const email = document.getElementById('email').value;
+
+      const response = await fetch('/validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const result = await response.json();
+      modalMessage.textContent = result.message;
+      messageModal.style.display = 'block';
+
+      if (result.status === 'success') {
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 3000);
+      }
+    });
+
+    // Close the modal when the close button is clicked
+    closeModal.addEventListener('click', () => {
+      messageModal.style.display = 'none';
+    });
+
+    // Optional: Close the modal when clicking outside the modal content
+    window.addEventListener('click', (event) => {
+      if (event.target === messageModal) {
+        messageModal.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

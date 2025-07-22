@@ -1,0 +1,45 @@
+# Exclude specified folders
+environment/
+extras/
+experiments/
+dataset/
+images/
+results/
+uploads/
+XYZ/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+
+# Windows
+Thumbs.db
+Desktop.iniCLIP/ 
+CLIP/ 
+advanced_outputs/ 
+cloud_config.json 
+*.json 
+config.json 
+credentials.json 
+*.key 
+*.pem 
+cloud_config.json 
+*.json 
+config.json 
+credentials.json 
+*.key 

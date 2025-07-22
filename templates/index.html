@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative AI Shoe Designer - Shoe Design Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-shoe-prints me-2"></i>Generative AI Shoe Designer
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#generator">Generator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#text-generator">Text Generator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#favorites">Favorites</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid hero-section mb-5">
+        <div class="container text-center py-5">
+            <h1 class="display-4 fw-bold text-white">Design the Future of Footwear</h1>
+            <p class="lead text-white">Generate unique shoe designs from your existing models or create from text descriptions</p>
+        </div>
+    </div>
+
+    <!-- Generator Mode Toggle -->
+    <div class="container mb-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="text-center">
+                    <div class="btn-group" role="group" aria-label="Generator Mode">
+                        <button type="button" class="btn btn-primary" id="imageGeneratorBtn">
+                            <i class="fas fa-image me-2"></i>Image Variations
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" id="textGeneratorBtn">
+                            <i class="fas fa-font me-2"></i>Text to Image
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Generator Section -->
+    <div class="container mb-5" id="generator">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title mb-4">
+                    <i class="fas fa-image me-2"></i>Shoe Design Generator - Image Variations
+                </h2>
+                
+                <form id="designForm" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="shoeImage" class="form-label">Upload Shoe Image</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="shoeImage" name="shoe_image" accept="image/*" required>
+                                <button class="btn btn-outline-secondary" type="button" id="previewBtn">Preview</button>
+                            </div>
+                            <div class="form-text">Select a high-quality image of your shoe design</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="variationsCount" class="form-label">Number of Variations</label>
+                            <select class="form-select" id="variationsCount" name="variations_count">
+                                <option value="1">1 Variation</option>
+                                <option value="2">2 Variations</option>
+                                <option value="3">3 Variations</option>
+                                <option value="4" selected>4 Variations</option>
+                                <option value="6">6 Variations</option>
+                                <option value="8">8 Variations</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-12 text-center">
+                            <div id="previewContainer" class="preview-container d-none">
+                                <img id="imagePreview" src="#" alt="Preview" class="img-fluid preview-image">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button type="submit" id="generateBtn" class="btn btn-primary btn-lg me-2">
+                                <i class="fas fa-magic me-2"></i>Generate Variations
+                            </button>
+                            <button type="button" id="regenerateBtn" class="btn btn-secondary btn-lg" disabled>
+                                <i class="fas fa-redo me-2"></i>Regenerate
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="mt-5">
+                    <div id="loadingIndicator" class="text-center d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Generating designs... This may take a few minutes</p>
+                    </div>
+                    
+                    <div id="resultsContainer" class="d-none">
+                        <h3 class="mb-3">Generated Variations</h3>
+                        <p class="text-muted mb-3">Click the heart icon to add to favorites</p>
+                        <div class="row" id="generatedImages">
+                            <!-- Generated images will be inserted here -->
+                        </div>
+                        <div class="text-center mt-4">
+                            <button id="downloadAllBtn" class="btn btn-success">
+                                <i class="fas fa-download me-2"></i>Download All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Text to Image Generator Section -->
+    <div class="container mb-5 d-none" id="text-generator">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title mb-4">
+                    <i class="fas fa-font me-2"></i>Text to Image Generator
+                </h2>
+                
+                <form id="textToImageForm">
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="textPrompt" class="form-label">Describe Your Shoe Design</label>
+                            <textarea class="form-control" id="textPrompt" name="text_prompt" rows="3" 
+                                      placeholder="Example: brown leather boots with laces, running shoes with blue accents, elegant high heels..." required></textarea>
+                            <div class="form-text">Describe the shoe design you want to create. Be specific about colors, materials, style, etc.</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="generationSteps" class="form-label">Generation Quality</label>
+                            <select class="form-select" id="generationSteps" name="steps">
+                                <option value="200">Fast (200 steps)</option>
+                                <option value="300" selected>Balanced (300 steps)</option>
+                                <option value="500">High Quality (500 steps)</option>
+                                <option value="800">Ultra Quality (800 steps)</option>
+                            </select>
+                            <div class="form-text">Higher steps = better quality but slower</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <label for="qualityThreshold" class="form-label">Quality Filter</label>
+                            <select class="form-select" id="qualityThreshold" name="quality_threshold">
+                                <option value="0.8">Very Strict (Best results only)</option>
+                                <option value="0.6" selected>Balanced</option>
+                                <option value="0.4">Relaxed (More results)</option>
+                                <option value="0.2">All Results</option>
+                            </select>
+                            <div class="form-text">Controls how many images are saved based on quality</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="mt-4">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Tips for better results:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li>Be specific about colors and materials</li>
+                                        <li>Mention the shoe type (boots, sneakers, heels, etc.)</li>
+                                        <li>Include style details (laces, buckles, patterns)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button type="submit" id="generateTextBtn" class="btn btn-primary btn-lg me-2">
+                                <i class="fas fa-magic me-2"></i>Generate from Text
+                            </button>
+                            <button type="button" id="regenerateTextBtn" class="btn btn-secondary btn-lg" disabled>
+                                <i class="fas fa-redo me-2"></i>Regenerate
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="mt-5">
+                    <div id="textLoadingIndicator" class="text-center d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Generating design from text... This may take several minutes</p>
+                        <div class="progress mt-3" style="height: 25px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" style="width: 0%" id="textProgressBar">
+                                <span id="textProgressText">Initializing...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="textResultsContainer" class="d-none">
+                        <h3 class="mb-3">Generated from Text</h3>
+                        <p class="text-muted mb-3" id="generatedPromptDisplay"></p>
+                        <div class="row" id="textGeneratedImages">
+                            <!-- Generated images will be inserted here -->
+                        </div>
+                        <div class="text-center mt-4">
+                            <button id="downloadAllTextBtn" class="btn btn-success">
+                                <i class="fas fa-download me-2"></i>Download All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container-fluid bg-light py-5" id="favorites">
+        <div class="container">
+            <h2 class="text-center mb-4">Favorite Designs</h2>
+            <p class="text-center text-muted mb-4">Your saved designs appear here. Swipe to browse.</p>
+            
+            <div id="noFavoritesMessage" class="text-center py-5">
+                <i class="fas fa-heart-broken fs-1 text-secondary mb-3"></i>
+                <p class="text-muted">No favorite designs yet. Generate designs and mark them as favorites to see them here.</p>
+            </div>
+            
+            <div id="favoritesSlider" class="favorites-slider d-none">
+                <!-- Favorite images will be inserted here -->
+            </div>
+        </div>
+    </div>
+    
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p>© 2025 Generative AI Shoe Designer. A powerful tool for shoe designers.</p>
+        </div>
+    </footer>
+
+    <!-- Toast for notifications -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong class="me-auto" id="toastTitle">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                Action completed successfully.
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <!-- Other scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
