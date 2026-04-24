@@ -31,8 +31,8 @@ A Final Year Project (FYP) that adapts NVIDIA's StyleGAN3 architecture for intel
 
 This system fine-tunes the StyleGAN3-T generator on a custom dataset of shoe images. The trained generator is integrated into a Flask web application that offers two generation modes:
 
-1. **Image-to-Variations** — Upload a shoe photo; the system projects it into the StyleGAN3 latent space using LPIPS-guided optimisation and generates multiple stylistic variations.
-2. **Text-to-Image** — Enter a text prompt (e.g., *"blue sneaker with white sole"*); the system uses [OpenAI CLIP](https://github.com/openai/CLIP) to optimise a latent code in W-space until the generated image best matches the description.
+1. **Image-to-Variations** : Upload a shoe photo; the system projects it into the StyleGAN3 latent space using LPIPS-guided optimisation and generates multiple stylistic variations.
+2. **Text-to-Image** : Enter a text prompt (e.g., *"blue sneaker with white sole"*); the system uses [OpenAI CLIP](https://github.com/openai/CLIP) to optimise a latent code in W-space until the generated image best matches the description.
 
 User accounts, generated designs, and favourites are persisted using Firebase Authentication + Firestore, and images are stored in Cloudinary.
 
@@ -42,141 +42,39 @@ User accounts, generated designs, and favourites are persisted using Firebase Au
 
 ### Image-to-Variation Generation
 
-The user uploads a shoe image. The system projects it into StyleGAN3's Z-space using LPIPS + MSE optimisation, reconstructs the shoe, then generates four stylistic variations at increasing latent perturbation strengths (0.1 → 0.5).
+Upload any shoe image. The system projects it into StyleGAN3's Z-space using LPIPS + MSE optimisation, reconstructs the shoe, then generates four stylistic variations at increasing latent perturbation strengths (0.1 → 0.5). The samples below span a range of shoe styles — trainers, flat shoes, runners, and formal footwear.
 
----
-
-#### Test 1
-
-<table>
-  <tr>
-    <th align="center">Input</th>
-    <th align="center">Reconstruction</th>
-    <th align="center">Variation (0.1)</th>
-    <th align="center">Variation (0.2)</th>
-    <th align="center">Variation (0.3)</th>
-    <th align="center">Variation (0.5)</th>
-  </tr>
-  <tr>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%201/test1.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%201/test2reconstruction.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%201/variation_1_strength_0.1.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%201/variation_2_strength_0.2.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%201/variation_3_strength_0.3.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%201/variation_4_strength_0.5.jpg" width="120"/></td>
-  </tr>
-</table>
-
-#### Test 2
-
-<table>
-  <tr>
-    <th align="center">Input</th>
-    <th align="center">Reconstruction</th>
-    <th align="center">Variation (0.1)</th>
-    <th align="center">Variation (0.2)</th>
-    <th align="center">Variation (0.3)</th>
-    <th align="center">Variation (0.5)</th>
-  </tr>
-  <tr>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%202/input1.png" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%202/test2reconstruction.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%202/variation_1_strength_0.1.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%202/variation_2_strength_0.2.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%202/variation_3_strength_0.3.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%202/variation_4_strength_0.5.jpg" width="120"/></td>
-  </tr>
-</table>
-
-#### Test 3
-
-<table>
-  <tr>
-    <th align="center">Input</th>
-    <th align="center">Reconstruction</th>
-    <th align="center">Variation (0.1)</th>
-    <th align="center">Variation (0.2)</th>
-    <th align="center">Variation (0.3)</th>
-    <th align="center">Variation (0.5)</th>
-  </tr>
-  <tr>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%203/test%203.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%203/test2reconstruction.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%203/variation_1_strength_0.1.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%203/variation_2_strength_0.2.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%203/variation_3_strength_0.3.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/test%203/variation_4_strength_0.5.jpg" width="120"/></td>
-  </tr>
-</table>
-
----
-
-### Unseen Input Tests
-
-These tests use shoe images the model was **never trained on** — verifying the system's ability to generalise to completely new shoe styles.
-
-#### Unseen 1
-
-<table>
-  <tr>
-    <th align="center">Input (Unseen)</th>
-    <th align="center">Reconstruction</th>
-    <th align="center">Variation (0.1)</th>
-    <th align="center">Variation (0.2)</th>
-    <th align="center">Variation (0.3)</th>
-    <th align="center">Variation (0.5)</th>
-  </tr>
-  <tr>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN1/TEST1_UNSEEN.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN1/test2reconstruction.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN1/style_variation_1.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN1/style_variation_2.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN1/style_variation_3.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN1/style_match_1_score_0.0730.jpg" width="120"/></td>
-  </tr>
-</table>
-
-#### Unseen 2
-
-<table>
-  <tr>
-    <th align="center">Input (Unseen)</th>
-    <th align="center">Reconstruction</th>
-    <th align="center">Variation (0.1)</th>
-    <th align="center">Variation (0.2)</th>
-    <th align="center">Variation (0.3)</th>
-    <th align="center">Variation (0.5)</th>
-  </tr>
-  <tr>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN2/TEST2_UNSEEN.png" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN2/test2reconstruction.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN2/variation_1_strength_0.1.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN2/variation_2_strength_0.2.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN2/variation_3_strength_0.3.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN2/variation_4_strength_0.5.jpg" width="120"/></td>
-  </tr>
-</table>
-
-#### Unseen 4
-
-<table>
-  <tr>
-    <th align="center">Input (Unseen)</th>
-    <th align="center">Reconstruction</th>
-    <th align="center">Variation (0.1)</th>
-    <th align="center">Variation (0.2)</th>
-    <th align="center">Variation (0.3)</th>
-    <th align="center">Variation (0.5)</th>
-  </tr>
-  <tr>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN4/TEST4_UNSEEN.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN4/test2reconstruction.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN4/variation_1_strength_0.1.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN4/variation_2_strength_0.2.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN4/variation_3_strength_0.3.jpg" width="120"/></td>
-    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN4/variation_4_strength_0.5.jpg" width="120"/></td>
-  </tr>
-</table>
+| | Input | Reconstruction | Variation (0.1) | Variation (0.2) | Variation (0.3) | Variation (0.5) |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Sample 1** | <img src="Tests_Inputs_Ouputs/test%201/test1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%201/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%201/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%201/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%201/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%201/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 2** | <img src="Tests_Inputs_Ouputs/test%202/input1.png" width="110"/> | <img src="Tests_Inputs_Ouputs/test%202/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%202/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%202/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%202/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%202/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 3** | <img src="Tests_Inputs_Ouputs/test%203/test%203.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%203/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%203/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%203/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%203/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%203/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 4** | <img src="Tests_Inputs_Ouputs/test%204/test%204.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%204/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%204/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%204/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%204/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%204/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 5** | <img src="Tests_Inputs_Ouputs/test%205/test%205.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%205/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%205/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%205/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%205/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%205/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 6** | <img src="Tests_Inputs_Ouputs/test%206/test%206.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%206/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%206/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%206/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%206/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test%206/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 7** | <img src="Tests_Inputs_Ouputs/test7/test7.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test7/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test7/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test7/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test7/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test7/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 8** | <img src="Tests_Inputs_Ouputs/test8/test8.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test8/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test8/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test8/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test8/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test8/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 9** | <img src="Tests_Inputs_Ouputs/test9/test9.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test9/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test9/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test9/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test9/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test9/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 10** | <img src="Tests_Inputs_Ouputs/test10/test10.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test10/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test10/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test10/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test10/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test10/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 11** | <img src="Tests_Inputs_Ouputs/test11/test11.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test11/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test11/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test11/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test11/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test11/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 12** | <img src="Tests_Inputs_Ouputs/test12/test12.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test12/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test12/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test12/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test12/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test12/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 13** | <img src="Tests_Inputs_Ouputs/test13/test13.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test13/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test13/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test13/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test13/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test13/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 14** | <img src="Tests_Inputs_Ouputs/test14/test14.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test14/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test14/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test14/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test14/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test14/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 15** | <img src="Tests_Inputs_Ouputs/test16/test16.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test16/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test16/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test16/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test16/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test16/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 16** | <img src="Tests_Inputs_Ouputs/test17/test17.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test17/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test17/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test17/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test17/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test17/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 17** | <img src="Tests_Inputs_Ouputs/test18/test18.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test18/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test18/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test18/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test18/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test18/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 18** | <img src="Tests_Inputs_Ouputs/test19/test19.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test19/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test19/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test19/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test19/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test19/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 19** | <img src="Tests_Inputs_Ouputs/test20/test20.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test20/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test20/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test20/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test20/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/test20/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 20** | <img src="Tests_Inputs_Ouputs/UNSEEN4/TEST4_UNSEEN.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN4/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN4/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN4/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN4/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN4/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 21** | <img src="Tests_Inputs_Ouputs/UNSEEN6/TEST6_UNSEEN.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN6/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN6/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN6/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN6/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN6/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 22** | <img src="Tests_Inputs_Ouputs/UNSEEN7/TEST7_UNSEEN.png" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN7/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN7/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN7/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN7/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN7/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 23** | <img src="Tests_Inputs_Ouputs/UNSEEN9/TEST9_UNSEEN.png" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN9/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN9/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN9/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN9/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN9/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 24** | <img src="Tests_Inputs_Ouputs/UNSEEN10/TEST10_UNSEEN.png" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN10/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN10/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN10/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN10/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN10/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 25** | <img src="Tests_Inputs_Ouputs/UNSEEN11/F2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN11/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN11/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN11/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN11/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN11/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 26** | <img src="Tests_Inputs_Ouputs/UNSEEN12/generated_test1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN12/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN12/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN12/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN12/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN12/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 27** | <img src="Tests_Inputs_Ouputs/UNSEEN13/input.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN13/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN13/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN13/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN13/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN13/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 28** | <img src="Tests_Inputs_Ouputs/UNSEEN14/generated_test4.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN14/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN14/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN14/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN14/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN14/variation_4_strength_0.5.jpg" width="110"/> |
+| **Sample 29** | <img src="Tests_Inputs_Ouputs/UNSEEN15/generated_test5.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN15/test2reconstruction.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN15/variation_1_strength_0.1.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN15/variation_2_strength_0.2.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN15/variation_3_strength_0.3.jpg" width="110"/> | <img src="Tests_Inputs_Ouputs/UNSEEN15/variation_4_strength_0.5.jpg" width="110"/> |
 
 ---
 
