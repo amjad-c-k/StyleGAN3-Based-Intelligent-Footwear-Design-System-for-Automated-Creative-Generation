@@ -40,6 +40,146 @@ User accounts, generated designs, and favourites are persisted using Firebase Au
 
 ## Sample Outputs
 
+### Image-to-Variation Generation
+
+The user uploads a shoe image. The system projects it into StyleGAN3's Z-space using LPIPS + MSE optimisation, reconstructs the shoe, then generates four stylistic variations at increasing latent perturbation strengths (0.1 → 0.5).
+
+---
+
+#### Test 1
+
+<table>
+  <tr>
+    <th align="center">Input</th>
+    <th align="center">Reconstruction</th>
+    <th align="center">Variation (0.1)</th>
+    <th align="center">Variation (0.2)</th>
+    <th align="center">Variation (0.3)</th>
+    <th align="center">Variation (0.5)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%201/test1.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%201/test2reconstruction.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%201/variation_1_strength_0.1.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%201/variation_2_strength_0.2.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%201/variation_3_strength_0.3.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%201/variation_4_strength_0.5.jpg" width="120"/></td>
+  </tr>
+</table>
+
+#### Test 2
+
+<table>
+  <tr>
+    <th align="center">Input</th>
+    <th align="center">Reconstruction</th>
+    <th align="center">Variation (0.1)</th>
+    <th align="center">Variation (0.2)</th>
+    <th align="center">Variation (0.3)</th>
+    <th align="center">Variation (0.5)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%202/input1.png" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%202/test2reconstruction.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%202/variation_1_strength_0.1.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%202/variation_2_strength_0.2.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%202/variation_3_strength_0.3.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%202/variation_4_strength_0.5.jpg" width="120"/></td>
+  </tr>
+</table>
+
+#### Test 3
+
+<table>
+  <tr>
+    <th align="center">Input</th>
+    <th align="center">Reconstruction</th>
+    <th align="center">Variation (0.1)</th>
+    <th align="center">Variation (0.2)</th>
+    <th align="center">Variation (0.3)</th>
+    <th align="center">Variation (0.5)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%203/test%203.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%203/test2reconstruction.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%203/variation_1_strength_0.1.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%203/variation_2_strength_0.2.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%203/variation_3_strength_0.3.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/test%203/variation_4_strength_0.5.jpg" width="120"/></td>
+  </tr>
+</table>
+
+---
+
+### Unseen Input Tests
+
+These tests use shoe images the model was **never trained on** — verifying the system's ability to generalise to completely new shoe styles.
+
+#### Unseen 1
+
+<table>
+  <tr>
+    <th align="center">Input (Unseen)</th>
+    <th align="center">Reconstruction</th>
+    <th align="center">Variation (0.1)</th>
+    <th align="center">Variation (0.2)</th>
+    <th align="center">Variation (0.3)</th>
+    <th align="center">Variation (0.5)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN1/TEST1_UNSEEN.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN1/test2reconstruction.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN1/style_variation_1.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN1/style_variation_2.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN1/style_variation_3.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN1/style_match_1_score_0.0730.jpg" width="120"/></td>
+  </tr>
+</table>
+
+#### Unseen 2
+
+<table>
+  <tr>
+    <th align="center">Input (Unseen)</th>
+    <th align="center">Reconstruction</th>
+    <th align="center">Variation (0.1)</th>
+    <th align="center">Variation (0.2)</th>
+    <th align="center">Variation (0.3)</th>
+    <th align="center">Variation (0.5)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN2/TEST2_UNSEEN.png" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN2/test2reconstruction.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN2/variation_1_strength_0.1.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN2/variation_2_strength_0.2.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN2/variation_3_strength_0.3.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN2/variation_4_strength_0.5.jpg" width="120"/></td>
+  </tr>
+</table>
+
+#### Unseen 4
+
+<table>
+  <tr>
+    <th align="center">Input (Unseen)</th>
+    <th align="center">Reconstruction</th>
+    <th align="center">Variation (0.1)</th>
+    <th align="center">Variation (0.2)</th>
+    <th align="center">Variation (0.3)</th>
+    <th align="center">Variation (0.5)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN4/TEST4_UNSEEN.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN4/test2reconstruction.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN4/variation_1_strength_0.1.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN4/variation_2_strength_0.2.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN4/variation_3_strength_0.3.jpg" width="120"/></td>
+    <td align="center"><img src="Tests_Inputs_Ouputs/UNSEEN4/variation_4_strength_0.5.jpg" width="120"/></td>
+  </tr>
+</table>
+
+---
+
 ### Text-to-Image Generation
 
 The following shoes were generated **purely from text prompts** — no input image was used. The system optimises a latent code in StyleGAN3's W-space using CLIP (ViT-B/32) until the generated image best matches the description.
@@ -47,68 +187,49 @@ The following shoes were generated **purely from text prompts** — no input ima
 <table>
   <tr>
     <td align="center">
-      <img src="outputs/blue-sneaker-with-white-sole_20250522_115521/final_optimized.jpg" width="160"/><br/>
+      <img src="outputs/blue-sneaker-with-white-sole_20250522_115521/final_optimized.jpg" width="150"/><br/>
       <sub><i>"blue sneaker with white sole"</i></sub>
     </td>
     <td align="center">
-      <img src="outputs/red-high-heels_20250522_051110/final_optimized.jpg" width="160"/><br/>
+      <img src="outputs/red-high-heels_20250522_051110/final_optimized.jpg" width="150"/><br/>
       <sub><i>"red high heels"</i></sub>
     </td>
     <td align="center">
-      <img src="outputs/orange-sneaker_20250522_103018/final_optimized.jpg" width="160"/><br/>
+      <img src="outputs/orange-sneaker_20250522_103018/final_optimized.jpg" width="150"/><br/>
       <sub><i>"orange sneaker"</i></sub>
     </td>
     <td align="center">
-      <img src="outputs/brown-chappals_20250522_052050/final_optimized.jpg" width="160"/><br/>
+      <img src="outputs/brown-chappals_20250522_052050/final_optimized.jpg" width="150"/><br/>
       <sub><i>"brown chappals"</i></sub>
+    </td>
+    <td align="center">
+      <img src="outputs/yellow-formal-shoes-for-men_20250522_050318/best_1_loss_0.5781.jpg" width="150"/><br/>
+      <sub><i>"yellow formal shoes for men"</i></sub>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <img src="outputs/yellow-formal-shoes-for-men_20250522_050318/best_1_loss_0.5781.jpg" width="160"/><br/>
-      <sub><i>"yellow formal shoes for men"</i></sub>
-    </td>
-    <td align="center">
-      <img src="outputs/red-leather-high-top-sneakers_1747844857.png" width="160"/><br/>
+      <img src="outputs/red-leather-high-top-sneakers_1747844857.png" width="150"/><br/>
       <sub><i>"red leather high top sneakers"</i></sub>
     </td>
     <td align="center">
-      <img src="outputs/formal-shoe_1747847635.png" width="160"/><br/>
+      <img src="outputs/formal-shoe_1747847635.png" width="150"/><br/>
       <sub><i>"formal shoe"</i></sub>
     </td>
     <td align="center">
-      <img src="outputs/orange-joggers-with-stripes_1747847489.png" width="160"/><br/>
+      <img src="outputs/orange-joggers-with-stripes_1747847489.png" width="150"/><br/>
       <sub><i>"orange joggers with stripes"</i></sub>
     </td>
-  </tr>
-</table>
-
-### Image-to-Variation Generation
-
-When a shoe image is uploaded, the system projects it into StyleGAN3's latent space using LPIPS-guided Z-space optimisation, then generates multiple stylistic variations at increasing perturbation strengths (0.1 → 0.5).
-
-<table>
-  <tr>
     <td align="center">
-      <img src="outputs/variation_00051115-0cee-4592-8295-4d158d0c1c77.jpg" width="160"/><br/>
-      <sub>Variation 1</sub>
+      <img src="outputs/sports-shoe_1747847675.png" width="150"/><br/>
+      <sub><i>"sports shoe"</i></sub>
     </td>
     <td align="center">
-      <img src="outputs/variation_00170afd-cc6f-41c3-a064-584bd98b5ddd.jpg" width="160"/><br/>
-      <sub>Variation 2</sub>
-    </td>
-    <td align="center">
-      <img src="outputs/variation_002229c7-c200-4a99-807a-a84561bf6ad1.jpg" width="160"/><br/>
-      <sub>Variation 3</sub>
-    </td>
-    <td align="center">
-      <img src="outputs/variation_00599139-85d2-4214-9c5b-ab6813f829b7.jpg" width="160"/><br/>
-      <sub>Variation 4</sub>
+      <img src="outputs/sports-shoe-for-women_1747847704.png" width="150"/><br/>
+      <sub><i>"sports shoe for women"</i></sub>
     </td>
   </tr>
 </table>
-
-> Each variation above was generated from a user-uploaded shoe image during testing. The system produces 4 variations per upload; each is independently projected and perturbed in latent space.
 
 ---
 
